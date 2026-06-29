@@ -4,25 +4,39 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap'
 }).addTo(map);
 
-/* =========================
-   DANE
-========================= */
+/* =====================
+   DATA MODEL (SCALE READY)
+===================== */
 const places = [
-  { name: "Burgerownia Miejska", city: "Warszawa", lat: 52.2297, lng: 21.0122, muala: true },
-  { name: "Kebab Premium", city: "Gliwice", lat: 50.2945, lng: 18.6714, muala: true },
-  { name: "Bar Mleczny Retro", city: "Kraków", lat: 50.0647, lng: 19.9450, muala: false },
-  { name: "Kebab King", city: "Katowice", lat: 50.2649, lng: 19.0238, muala: true },
+  {
+    id: 1,
+    name: "Burgerownia Miejska",
+    city: "Warszawa",
+    lat: 52.2297,
+    lng: 21.0122,
+    muala: true,
+    desc: "Bardzo dobry burger",
+    comments: []
+  },
+  {
+    id: 2,
+    name: "Kebab Premium",
+    city: "Gliwice",
+    lat: 50.2945,
+    lng: 18.6714,
+    muala: true,
+    desc: "Top kebab",
+    comments: []
+  }
 ];
 
-/* =========================
-   STATE
-========================= */
 let markers = [];
 let currentFilter = "all";
+let selectedPlace = null;
 
-/* =========================
+/* =====================
    RENDER MAP + LIST
-========================= */
+===================== */
 function render(data) {
 
   markers.forEach(m => map.removeLayer(m));
@@ -35,11 +49,7 @@ function render(data) {
 
     const marker = L.marker([p.lat, p.lng])
       .addTo(map)
-      .bindPopup(`
-        <b>${p.name}</b><br>
-        📍 ${p.city}<br>
-        ${p.muala ? "🔥 MUALA" : "OK"}
-      `);
+      .bindPopup(p.name);
 
     markers.push(marker);
 
@@ -47,30 +57,67 @@ function render(data) {
     card.className = "card";
 
     card.innerHTML = `
-      <div class="name">
-        ${p.name}
-        ${p.muala ? '<span class="badge">MUALA</span>' : ''}
-      </div>
-      <div class="city">${p.city}</div>
+      <b>${p.name}</b>
+      ${p.muala ? '<span class="badge">MUALA</span>' : ''}
+      <br>
+      <small>${p.city}</small>
     `;
 
-    card.onclick = () => {
-      map.flyTo([p.lat, p.lng], 14);
-      marker.openPopup();
-    };
+    card.onclick = () => showDetails(p);
 
     list.appendChild(card);
   });
 }
 
-/* =========================
-   SEARCH (REAL)
-========================= */
+/* =====================
+   DETAILS PANEL (LIKE GOOGLE MAPS)
+===================== */
+function showDetails(place) {
+  selectedPlace = place;
+
+  document.getElementById("details").classList.remove("hidden");
+
+  document.getElementById("detailsContent").innerHTML = `
+    <h3>${place.name}</h3>
+    <p>📍 ${place.city}</p>
+    <p>${place.desc}</p>
+
+    <h4>Komentarze</h4>
+
+    <div id="comments">
+      ${(place.comments || []).map(c => `<p>💬 ${c}</p>`).join("")}
+    </div>
+
+    <input id="commentInput" placeholder="Dodaj komentarz..." />
+    <button onclick="addComment()">Dodaj</button>
+  `;
+
+  map.flyTo([place.lat, place.lng], 14);
+}
+
+/* =====================
+   COMMENTS (LOCAL STORAGE STYLE)
+===================== */
+function addComment() {
+  const input = document.getElementById("commentInput");
+  const text = input.value;
+
+  if (!text || !selectedPlace) return;
+
+  selectedPlace.comments.push(text);
+  input.value = "";
+
+  showDetails(selectedPlace);
+}
+
+/* =====================
+   SEARCH ENGINE PRO
+===================== */
 function update() {
   const q = document.getElementById("search").value.toLowerCase();
 
   let filtered = places.filter(p => {
-    const text = (p.name + " " + p.city).toLowerCase();
+    const text = (p.name + p.city + p.desc).toLowerCase();
     const match = text.includes(q);
 
     if (currentFilter === "muala") {
@@ -83,12 +130,11 @@ function update() {
   render(filtered);
 }
 
-/* =========================
-   FILTER BUTTONS
-========================= */
+/* =====================
+   FILTERS
+===================== */
 document.querySelectorAll(".chip").forEach(btn => {
   btn.addEventListener("click", () => {
-
     document.querySelectorAll(".chip").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
