@@ -3,14 +3,43 @@ body {
   font-family: Arial, sans-serif;
 }
 
-header {
-  background: black;
+#layout {
+  display: flex;
+  height: 100vh;
+}
+
+#sidebar {
+  width: 300px;
+  background: #111;
   color: white;
-  padding: 15px;
-  text-align: center;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  margin-top: 0;
+}
+
+#search {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+#list {
+  margin-top: 10px;
+}
+
+.item {
+  padding: 8px;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: #222;
 }
 
 #map {
-  height: calc(100vh - 80px);
-  width: 100%;
+  flex: 1;
 }
