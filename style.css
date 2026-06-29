@@ -78,3 +78,18 @@ label {
 #map {
   flex: 1;
 }
+.item {
+  transition: 0.2s;
+}
+
+.item:hover {
+  transform: translateX(5px);
+  border-left: 3px solid #ff2d55;
+}
+
+.badge {
+  background: #ff2d55;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+}
