@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MUALA MAP</title>
+  <title>MUALA MAP PRO</title>
 
   <link rel="stylesheet" href="style.css"/>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -14,25 +14,28 @@
 
 <div id="app">
 
-  <!-- SIDEBAR -->
+  <!-- LEFT PANEL -->
   <div id="sidebar">
 
-    <div class="header">
+    <div class="top">
       <h2>🍔 MUALA MAP</h2>
-      <p>Książulo tracker</p>
+      <input id="search" placeholder="Szukaj (burger, kebab, miasto...)" />
     </div>
-
-    <input id="search" placeholder="Szukaj restauracji, miasta..." />
 
     <div class="filters">
       <button class="chip active" data-filter="all">Wszystkie</button>
-      <button class="chip" data-filter="muala">MUALA 🔥</button>
+      <button class="chip" data-filter="muala">🔥 MUALA</button>
     </div>
 
     <div id="list"></div>
   </div>
 
-  <!-- MAPA -->
+  <!-- DETAILS PANEL -->
+  <div id="details" class="hidden">
+    <div id="detailsContent"></div>
+  </div>
+
+  <!-- MAP -->
   <div id="map"></div>
 
 </div>
