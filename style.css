@@ -1,95 +1,80 @@
-// 📍 mapa
-const map = L.map('map').setView([52.1, 19.4], 6);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '&copy; OpenStreetMap'
-}).addTo(map);
-
-// 🍔 baza miejsc (MUALA / Książulo)
-const places = [
-  {
-    name: "Burgerownia Miejska",
-    city: "Warszawa",
-    lat: 52.2297,
-    lng: 21.0122,
-    muala: true,
-    video: "https://www.youtube.com/watch?v=example1"
-  },
-  {
-    name: "Kebab Premium",
-    city: "Gliwice",
-    lat: 50.2945,
-    lng: 18.6714,
-    muala: true,
-    video: "https://www.youtube.com/watch?v=example2"
-  },
-  {
-    name: "Bar Mleczny Retro",
-    city: "Kraków",
-    lat: 50.0647,
-    lng: 19.9450,
-    muala: false,
-    video: "https://www.youtube.com/watch?v=example3"
-  }
-];
-
-let markers = [];
-
-// 📍 render mapy
-function render(data) {
-
-  // usuń stare markery
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-
-  document.getElementById("list").innerHTML = "";
-
-  data.forEach(p => {
-
-    const marker = L.marker([p.lat, p.lng]).addTo(map)
-      .bindPopup(`
-        <b>${p.name}</b><br>
-        📍 ${p.city}<br>
-        ⭐ ${p.muala ? "MUALA 🔥" : "OK"}<br>
-        <a href="${p.video}" target="_blank">🎥 Odcinek</a>
-      `);
-
-    markers.push(marker);
-
-    // lista
-    const div = document.createElement("div");
-    div.className = "item";
-    div.innerHTML = `
-      <b>${p.name}</b><br>
-      ${p.city} ${p.muala ? "🔥" : ""}
-    `;
-
-    div.onclick = () => {
-      map.setView([p.lat, p.lng], 13);
-      marker.openPopup();
-    };
-
-    document.getElementById("list").appendChild(div);
-  });
+body {
+  margin: 0;
+  font-family: system-ui, Arial;
+  background: #0f0f0f;
+  color: white;
 }
 
-// 🔍 search + filter
-function update() {
-  const text = document.getElementById("search").value.toLowerCase();
-  const onlyMuala = document.getElementById("filterMuala").checked;
-
-  const filtered = places.filter(p => {
-    return (
-      p.name.toLowerCase().includes(text) &&
-      (!onlyMuala || p.muala)
-    );
-  });
-
-  render(filtered);
+#layout {
+  display: flex;
+  height: 100vh;
 }
 
-document.getElementById("search").addEventListener("input", update);
-document.getElementById("filterMuala").addEventListener("change", update);
+/* SIDEBAR */
+#sidebar {
+  width: 340px;
+  background: linear-gradient(180deg, #111, #0a0a0a);
+  padding: 14px;
+  overflow-y: auto;
+  border-right: 1px solid #222;
+}
 
-// start
-render(places);
+#sidebar h2 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+}
+
+/* SEARCH */
+#search {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #1b1b1b;
+  color: white;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* FILTER */
+label {
+  font-size: 13px;
+  display: block;
+  margin-bottom: 10px;
+  color: #aaa;
+}
+
+/* LISTA */
+.item {
+  background: #161616;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid #222;
+}
+
+.item:hover {
+  transform: scale(1.02);
+  background: #222;
+}
+
+.item b {
+  color: #fff;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-radius: 6px;
+  background: #ff2d55;
+  margin-left: 5px;
+}
+
+/* MAPA */
+#map {
+  flex: 1;
+}
